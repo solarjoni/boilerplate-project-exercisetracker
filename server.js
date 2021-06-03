@@ -1,15 +1,27 @@
 const express = require('express')
 const app = express()
+
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded( {extended: false } ))
+app.use(bodyParser.json())
+
 const cors = require('cors')
 require('dotenv').config()
-
 app.use(cors())
+
+const mongoose = require('mongoose')
+mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true, useNewUrlParser: true }, function(err) {
+  if (err) return console.log("Error connecting to MongoDB:", err)
+  console.log("Connection to MongoDB -- ready state is:", mongoose.connection.readyState)
+})
+
+const userHandler = require("./handlers/userHandler.js")
+
+// Routing setup
 app.use(express.static('public'))
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
-
-
 
 
 
